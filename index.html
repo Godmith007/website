@@ -1,115 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Portfolio</title>
-  <meta name="description" content="What I do and who I want to become." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<!--ARTIFACT-START-->
+<title>Amith Antony John</title>
+<meta name="claude:viewport-fit-sides" content="cover" />
+<meta name="description" content="Mechanical engineer in the making: design, simulation and advanced manufacturing." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<!--HEAD-END-->
 </head>
 <body>
-  <canvas id="bg"></canvas>
-  <div class="cursor-glow" aria-hidden="true"></div>
-  <div class="progress" aria-hidden="true"></div>
-
-  <header class="nav">
-    <a href="#home" class="logo" id="logo">YN</a>
-    <nav>
-      <a href="#about">About</a>
-      <a href="#skills">Skills</a>
-      <a href="#projects">Work</a>
+<!--BODY-START-->
+<header class="nav">
+  <div class="nav-in">
+    <a href="#top" class="logo" id="logo" aria-label="Back to top">AJ</a>
+    <nav aria-label="Sections">
+      <a href="#profile">Profile</a>
+      <a href="#projects">Projects</a>
+      <a href="#toolkit">Toolkit</a>
+      <a href="#experience">Experience</a>
       <a href="#journey">Journey</a>
-      <a href="#future">Future</a>
+      <a href="#goals">Goals</a>
       <a href="#contact">Contact</a>
     </nav>
     <div class="nav-actions">
-      <button class="icon-btn" id="termBtn" title="Open terminal (press `)">&gt;_</button>
-      <button class="icon-btn" id="themeBtn" title="Toggle theme">◐</button>
+      <button class="icon-btn mono" id="termBtn" type="button" title="Open command line (press `)">&gt;_</button>
+      <button class="icon-btn" id="themeBtn" type="button" title="Switch light / dark" aria-label="Switch light or dark theme"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
     </div>
-  </header>
+  </div>
+</header>
 
-  <main>
-    <section id="home" class="hero">
-      <p class="eyebrow mono">hello, world 👋</p>
-      <h1 class="hero-title">
-        I'm <span class="grad" id="heroName">Your Name</span><br />
-        a <span class="typed" id="typed"></span><span class="caret">|</span>
-      </h1>
+<main id="top">
+  <section class="hero wrap">
+    <div class="hero-text">
+      <p class="label">Portfolio · Mechanical engineering</p>
+      <h1 class="hero-name" id="heroName">Amith Antony John</h1>
+      <p class="hero-role"><span id="role"></span><br />focused on <span class="cycle" id="cycle"></span></p>
       <p class="tagline" id="tagline"></p>
       <div class="hero-cta">
-        <a href="#projects" class="btn magnetic">See my work</a>
-        <a href="#future" class="btn ghost magnetic">Where I'm going →</a>
+        <a href="#projects" class="btn">See my projects</a>
+        <a href="#goals" class="btn ghost">Where I'm heading</a>
       </div>
-      <p class="hint mono">move your mouse · click the background · press <kbd>`</kbd></p>
-      <div class="scroll-cue" aria-hidden="true"><span></span></div>
-    </section>
-
-    <section id="about" class="section">
-      <h2 class="section-title reveal"><span class="mono num">01</span> About me</h2>
-      <div class="about-grid">
-        <div class="about-text reveal" id="aboutText"></div>
-        <div class="stats reveal" id="stats"></div>
-      </div>
-    </section>
-
-    <section id="skills" class="section">
-      <h2 class="section-title reveal"><span class="mono num">02</span> What I do</h2>
-      <div class="filters reveal" id="skillFilters"></div>
-      <div class="skills" id="skillList"></div>
-    </section>
-
-    <section id="projects" class="section">
-      <h2 class="section-title reveal"><span class="mono num">03</span> Things I've built</h2>
-      <div class="cards" id="projectCards"></div>
-    </section>
-
-    <section id="journey" class="section">
-      <h2 class="section-title reveal"><span class="mono num">04</span> My journey</h2>
-      <p class="sub reveal">Drag the slider — or click a step — to travel from where it started to where I'm heading.</p>
-      <div class="journey reveal">
-        <div class="track" id="track"><div class="track-fill" id="trackFill"></div></div>
-        <div class="steps" id="steps"></div>
-        <input type="range" id="journeyRange" min="0" max="4" step="1" value="0" aria-label="Journey step" />
-        <div class="journey-card" id="journeyCard"></div>
-      </div>
-    </section>
-
-    <section id="future" class="section">
-      <h2 class="section-title reveal"><span class="mono num">05</span> Who I want to become</h2>
-      <p class="sub reveal">Tap a card to flip it.</p>
-      <div class="dreams" id="dreams"></div>
-    </section>
-
-    <section id="contact" class="section contact">
-      <h2 class="section-title reveal"><span class="mono num">06</span> Say hi</h2>
-      <p class="sub reveal">Got an idea, a question, or an opportunity? I'd love to hear it.</p>
-      <div class="links reveal" id="links"></div>
-    </section>
-  </main>
-
-  <footer class="footer mono">
-    built from scratch · <span id="year"></span>
-  </footer>
-
-  <!-- Easter-egg terminal -->
-  <div class="terminal" id="terminal" aria-hidden="true">
-    <div class="term-bar">
-      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-      <span class="mono term-title">guest@portfolio</span>
-      <button class="term-close" id="termClose" aria-label="Close terminal">×</button>
     </div>
-    <div class="term-body mono" id="termBody"></div>
-    <form class="term-input mono" id="termForm">
-      <span>$</span><input id="termInput" autocomplete="off" spellcheck="false" aria-label="Terminal command" />
-    </form>
+
+    <figure class="sim" aria-label="Interactive thermal model of a wire arc additive manufacturing wall">
+      <figcaption class="sim-head">
+        <span class="label">Live model · WAAM wall, transient thermal</span>
+        <span class="mono sim-status" id="simStatus">ready</span>
+      </figcaption>
+      <div class="sim-stage">
+        <canvas id="sim" width="600" height="300"></canvas>
+        <div class="sim-tip mono" id="simTip" hidden></div>
+      </div>
+      <div class="dim mono" aria-hidden="true"><span>150 mm</span></div>
+      <div class="legend" id="legend" aria-label="Temperature scale in degrees Celsius"></div>
+      <div class="readouts mono">
+        <div><small>Layer</small><b id="rLayer">0 / 12</b></div>
+        <div><small>Peak T</small><b id="rPeak">22 °C</b></div>
+        <div><small>Sim time</small><b id="rTime">0.0 s</b></div>
+      </div>
+      <div class="sim-controls">
+        <button type="button" class="btn small" id="simRun">Print the wall</button>
+        <button type="button" class="btn small ghost" id="simReset">Reset</button>
+        <label class="ctl mono" for="simPattern">Path
+          <select id="simPattern">
+            <option value="zigzag">Zig-zag</option>
+            <option value="raster">One direction</option>
+          </select>
+        </label>
+        <label class="ctl mono" for="simDwell">Cooling between layers
+          <input type="range" id="simDwell" min="0" max="100" value="40" />
+        </label>
+      </div>
+      <p class="sim-note">A simplified version of my seminar model, running in your browser. Hover over the wall to read the temperature.</p>
+    </figure>
+  </section>
+
+  <section id="profile" class="section wrap">
+    <h2 class="section-title"><span class="label">Profile</span>About me</h2>
+    <div class="profile-grid">
+      <div class="about" id="about"></div>
+      <dl class="facts" id="facts"></dl>
+    </div>
+  </section>
+
+  <section id="projects" class="section wrap">
+    <h2 class="section-title"><span class="label">Projects</span>What I've worked on</h2>
+    <p class="sub">Open a project to see the details.</p>
+    <div class="projects" id="projects-list"></div>
+  </section>
+
+  <section id="toolkit" class="section wrap">
+    <h2 class="section-title"><span class="label">Toolkit</span>What I work with</h2>
+    <div class="filters" id="filters" role="group" aria-label="Filter skills"></div>
+    <div class="skills" id="skills"></div>
+    <p class="key mono"><span class="lv lv-3"></span>Strong <span class="lv lv-2"></span>Working <span class="lv lv-1"></span>Basics</p>
+  </section>
+
+  <section id="experience" class="section wrap">
+    <h2 class="section-title"><span class="label">Experience</span>Industry time &amp; certifications</h2>
+    <div class="exp" id="exp"></div>
+    <h3 class="minor">Certifications &amp; workshops</h3>
+    <ul class="certs" id="certs"></ul>
+  </section>
+
+  <section id="journey" class="section wrap">
+    <h2 class="section-title"><span class="label">Journey</span>Where I started, where I'm going</h2>
+    <p class="sub">Drag the slider or pick a point on the line.</p>
+    <div class="journey">
+      <div class="steps" id="steps"></div>
+      <input type="range" id="journeyRange" min="0" max="7" step="1" value="0" aria-label="Point on my journey" />
+      <div class="journey-card" id="journeyCard" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section id="goals" class="section wrap">
+    <h2 class="section-title"><span class="label">Goals</span>Who I want to become</h2>
+    <p class="sub">Tap a card to flip it.</p>
+    <div class="goals" id="goalCards"></div>
+  </section>
+
+  <section id="contact" class="section wrap contact">
+    <h2 class="section-title"><span class="label">Contact</span>Let's talk</h2>
+    <p class="sub">Hiring a graduate engineer, or working on something in design or manufacturing? I'd like to hear about it.</p>
+    <div class="links" id="links"></div>
+  </section>
+</main>
+
+<footer class="titleblock wrap mono" aria-label="Drawing title block">
+  <div><small>Drawn by</small><span id="tbName">A. A. John</span></div>
+  <div><small>Title</small><span>Portfolio</span></div>
+  <div><small>Units</small><span>mm · °C</span></div>
+  <div><small>Scale</small><span>1:1</span></div>
+  <div><small>Sheet</small><span>1 / 1</span></div>
+  <div><small>Rev</small><span id="rev"></span></div>
+</footer>
+
+<div class="cad-status mono" id="cadStatus" aria-hidden="true">X <b id="cx">0</b> Y <b id="cy">0</b> mm</div>
+
+<div class="terminal" id="terminal" hidden>
+  <div class="term-bar">
+    <span class="mono term-title">Command line</span>
+    <button class="term-close" id="termClose" type="button" aria-label="Close command line">×</button>
   </div>
+  <div class="term-body mono" id="termBody"></div>
+  <form class="term-input mono" id="termForm">
+    <label for="termInput">BEGIN:</label><input id="termInput" autocomplete="off" spellcheck="false" />
+  </form>
+</div>
 
-  <div class="toast" id="toast"></div>
-
-  <script src="content.js"></script>
-  <script src="script.js"></script>
+<div class="toast" id="toast" role="status"></div>
+<!--BODY-END-->
+<script src="content.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
