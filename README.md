@@ -6,6 +6,9 @@ It's plain HTML, CSS and JavaScript, with no build step.
 ## Make it yours
 Edit **`content.js`**. Everything on the page comes from that file: name, roles, about, skills, projects, journey, goals and links.
 
+## Add photos
+Put images in `images/` and add `image: { src: "images/file.jpg", alt: "..." }` to a project in `content.js`.
+
 ## Features
 - Particle background that reacts to the mouse (click the background for a burst)
 - Typing headline, scroll reveals, animated counters and skill bars

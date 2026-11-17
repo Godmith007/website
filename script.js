@@ -5,6 +5,139 @@
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let figId = 0;
+
+  /* ---------------- Project figures (drawn, not photos) ---------------- */
+  const FIGS = {
+    // Interactive Ackermann diagram: drag the steering input, see both wheel angles
+    ackermann() {
+      const n = ++figId;
+      const f = el("figure", "fig");
+      const L = 1050, TR = 1000, s = 0.13;           // example wheelbase & track (mm), px per mm
+      const x0 = 70, yF = 40, yR = yF + L * s;        // left front wheel x, front & rear axle y
+      const xL = x0, xR = x0 + TR * s;
+      f.innerHTML = `<figcaption class="fig-head"><span class="label">Ackermann steering · top view</span></figcaption>
+        <svg viewBox="0 0 560 236" class="fig-svg" role="img" aria-label="Top view of a go-kart turning right with Ackermann steering">
+          <g class="dimline"><line x1="${xL}" y1="${yR + 30}" x2="${xR}" y2="${yR + 30}"/><text x="${(xL + xR) / 2}" y="${yR + 44}">track ${TR}</text>
+            <line x1="${xL - 30}" y1="${yF}" x2="${xL - 30}" y2="${yR}"/><text x="${xL - 36}" y="${(yF + yR) / 2}" transform="rotate(-90 ${xL - 36} ${(yF + yR) / 2})">wheelbase ${L}</text></g>
+          <rect class="chassis" x="${xL + 14}" y="${yF - 10}" width="${xR - xL - 28}" height="${yR - yF + 20}" rx="10"/>
+          <line class="axle" x1="${xL}" y1="${yR}" x2="560" y2="${yR}"/>
+          <line class="ray" id="ackRayL${n}"/><line class="ray" id="ackRayR${n}"/>
+          <rect class="wheel" x="${xL - 6}" y="${yR - 14}" width="12" height="28" rx="3"/>
+          <rect class="wheel" x="${xR - 6}" y="${yR - 14}" width="12" height="28" rx="3"/>
+          <rect class="wheel front" id="ackWL${n}" x="-6" y="-14" width="12" height="28" rx="3"/>
+          <rect class="wheel front" id="ackWR${n}" x="-6" y="-14" width="12" height="28" rx="3"/>
+          <circle class="centre" id="ackO${n}" r="4"/><text class="centre-t" id="ackOt${n}">turning centre</text>
+        </svg>
+        <label class="ctl mono" for="ackIn${n}">Inner wheel angle <input type="range" id="ackIn${n}" min="18" max="40" value="26" /></label>
+        <dl class="fig-read mono"><div><dt>Inner wheel</dt><dd id="ackI${n}"></dd></div><div><dt>Outer wheel</dt><dd id="ackOo${n}"></dd></div><div><dt>Turn radius</dt><dd id="ackR${n}"></dd></div></dl>
+        <p class="fig-note">Both front wheels point at one turning centre on the rear axle line, so the inner wheel turns more sharply and the tyres don't scrub. Wheelbase and track here are example values to show the principle.</p>`;
+      const g = (id) => $("#" + id + n, f);
+      const upd = () => {
+        const di = (+g("ackIn").value * Math.PI) / 180;
+        const xc = xR + (L * s) / Math.tan(di);
+        const doo = Math.atan((L * s) / (xc - xL));
+        g("ackWL").setAttribute("transform", `translate(${xL} ${yF}) rotate(${(doo * 180) / Math.PI})`);
+        g("ackWR").setAttribute("transform", `translate(${xR} ${yF}) rotate(${(di * 180) / Math.PI})`);
+        for (const [id, x] of [["ackRayL", xL], ["ackRayR", xR]]) {
+          const r = g(id); r.setAttribute("x1", x); r.setAttribute("y1", yF); r.setAttribute("x2", xc); r.setAttribute("y2", yR);
+        }
+        g("ackO").setAttribute("cx", xc); g("ackO").setAttribute("cy", yR);
+        const t = g("ackOt"); t.setAttribute("x", Math.min(xc, 520)); t.setAttribute("y", yR - 10);
+        g("ackI").textContent = ((di * 180) / Math.PI).toFixed(1) + "°";
+        g("ackOo").textContent = ((doo * 180) / Math.PI).toFixed(1) + "°";
+        g("ackR").textContent = ((L / Math.tan(di) + TR / 2) / 1000).toFixed(2) + " m";
+      };
+      g("ackIn").addEventListener("input", upd);
+      upd();
+      return f;
+    },
+
+    // Pitman arm before / after topology optimisation
+    topology() {
+      const n = ++figId;
+      const f = el("figure", "fig topo");
+      f.innerHTML = `<figcaption class="fig-head"><span class="label">Pitman arm · topology optimisation</span>
+          <span class="seg" role="group" aria-label="Show design">
+            <button type="button" id="topoA${n}" aria-pressed="false">Original</button><button type="button" id="topoB${n}" aria-pressed="true">Optimised</button>
+          </span></figcaption>
+        <svg viewBox="0 18 300 104" class="fig-svg" role="img" aria-label="Sketch of the pitman arm with material removed from the web">
+          <path class="part" d="M50 34 L250 46 L250 74 L50 86 Z"/>
+          <circle class="part" cx="50" cy="60" r="28"/><circle class="part" cx="250" cy="60" r="16"/>
+          <circle class="hole" cx="50" cy="60" r="12"/><circle class="hole" cx="250" cy="60" r="6"/>
+          <g class="cuts"><path d="M86 47 L152 54 L152 66 L86 73 Z"/><path d="M168 55 L224 58 L224 62 L168 65 Z"/></g>
+          <g class="dimline small"><text x="50" y="106">to steering column</text><text x="250" y="106">to tie rod</text></g>
+        </svg>
+        <dl class="fig-read mono"><div><dt>Mass</dt><dd id="topoM${n}"></dd></div><div><dt>Factor of safety</dt><dd id="topoF${n}"></dd></div><div><dt>Material</dt><dd>EN8 steel</dd></div></dl>
+        <p class="fig-note">Simplified sketch. Topology optimisation took material out of the web where stress was low, under the same 1040 N cornering load.</p>`;
+      const set = (opt) => {
+        f.classList.toggle("opt", opt);
+        $("#topoA" + n, f).setAttribute("aria-pressed", String(!opt));
+        $("#topoB" + n, f).setAttribute("aria-pressed", String(opt));
+        $("#topoM" + n, f).innerHTML = opt ? `84.65% <small>(−15.35%)</small>` : "100%";
+        $("#topoF" + n, f).textContent = opt ? "12.92" : "11.97";
+      };
+      $("#topoA" + n, f).onclick = () => set(false);
+      $("#topoB" + n, f).onclick = () => set(true);
+      set(true);
+      return f;
+    },
+
+    // WAAM tool paths compared
+    paths() {
+      const f = el("figure", "fig");
+      let raster = "", osc = "M12 18";
+      for (let i = 0; i < 6; i++) raster += `M14 ${16 + i * 14} L86 ${16 + i * 14} `;
+      for (let i = 0; i < 6; i++) { const y = 18 + i * 13; osc += ` L${i % 2 ? 12 : 88} ${y + 6}`; }
+      let sp = "M50 50"; for (let a = 0; a < 6 * Math.PI; a += 0.2) { const r = 2 + a * 2; sp += ` L${(50 + r * Math.cos(a)).toFixed(1)} ${(50 + r * Math.sin(a)).toFixed(1)}`; }
+      const card = (name, d, note) => `<button type="button" class="path-card"><svg viewBox="0 0 100 100" aria-hidden="true"><rect x="4" y="4" width="92" height="92" class="plate"/><path d="${d}" class="tp"/></svg><span>${name}</span>${note ? `<small>${note}</small>` : ""}</button>`;
+      f.innerHTML = `<figcaption class="fig-head"><span class="label">Tool paths compared · tap one to replay</span></figcaption>
+        <div class="path-row">${card("Raster", raster)}${card("Oscillation", osc)}${card("Out-in spiral", sp, "68.6% less distortion in one reviewed study")}</div>
+        <p class="fig-note">Same material, same machine. Only the order in which the torch lays down metal changes, and that changes how much the part warps.</p>`;
+      f.querySelectorAll(".path-card").forEach((b) => b.addEventListener("click", () => {
+        const p = $(".tp", b); p.classList.remove("draw"); void p.getBBox(); p.classList.add("draw");
+      }));
+      return f;
+    },
+
+    // Brake disc: workflow of the coupled analysis
+    disc() {
+      const f = el("figure", "fig");
+      const bolts = [0, 1, 2, 3, 4].map((i) => { const a = (i / 5) * 2 * Math.PI - Math.PI / 2; return `<circle class="hole-l" cx="${60 + 20 * Math.cos(a)}" cy="${60 + 20 * Math.sin(a)}" r="3"/>`; }).join("");
+      const vents = Array.from({ length: 18 }, (_, i) => { const a = (i / 18) * 2 * Math.PI; return `<circle class="hole-l" cx="${(60 + 44 * Math.cos(a)).toFixed(1)}" cy="${(60 + 44 * Math.sin(a)).toFixed(1)}" r="2.4"/>`; }).join("");
+      f.innerHTML = `<figcaption class="fig-head"><span class="label">One-way coupled analysis</span></figcaption>
+        <div class="flow">
+          <svg viewBox="0 0 120 120" class="disc" role="img" aria-label="Line drawing of a drilled motorcycle brake disc"><circle class="line" cx="60" cy="60" r="56"/><circle class="line" cx="60" cy="60" r="32"/><circle class="line" cx="60" cy="60" r="12"/>${bolts}${vents}</svg>
+          <ol class="steps-list">
+            <li><b>Thermal analysis</b><span>Heat from hard braking → disc temperature</span></li>
+            <li><b>Import temperatures</b><span>Temperature field becomes the load</span></li>
+            <li><b>Structural analysis</b><span>Thermal stress and deformation</span></li>
+            <li><b>Result</b><span>Hottest and most highly stressed regions found</span></li>
+          </ol>
+        </div>`;
+      return f;
+    },
+
+    // Home server: from enclosure to running apps
+    server() {
+      const f = el("figure", "fig");
+      const vents = Array.from({ length: 7 }, (_, i) => `<line class="line" x1="${40 + i * 10}" y1="30" x2="${40 + i * 10}" y2="58"/>`).join("");
+      f.innerHTML = `<figcaption class="fig-head"><span class="label">From enclosure to running apps</span></figcaption>
+        <div class="flow">
+          <svg viewBox="0 0 160 120" class="disc" role="img" aria-label="Line drawing of a small server casing">
+            <rect class="line" x="20" y="16" width="120" height="88" rx="6"/>${vents}
+            <rect class="line" x="34" y="72" width="60" height="18" rx="2"/><circle class="led" cx="124" cy="82" r="4"/>
+            <line class="line dash" x1="20" y1="110" x2="140" y2="110"/></svg>
+          <ol class="steps-list">
+            <li><b>Design the casing</b><span>Sized to house and protect the hardware</span></li>
+            <li><b>Build it</b><span>Fabricate and assemble the enclosure</span></li>
+            <li><b>Install Umbrel OS</b><span>Set up the operating system</span></li>
+            <li><b>Host apps</b><span>A fully working self-hosted server</span></li>
+          </ol>
+        </div>`;
+      return f;
+    },
+  };
 
   /* ---------------- Content ---------------- */
   $("#heroName").textContent = C.name;
@@ -24,7 +157,7 @@
   C.about.forEach((p) => $("#about").appendChild(el("p", "", esc(p))));
   C.facts.forEach((f) => $("#facts").appendChild(el("div", "", `<dt>${esc(f.value)}</dt><dd>${esc(f.label)}</dd>`)));
 
-  // Projects (expandable)
+  // Projects (expandable), each with drawn figures and optional photos
   C.projects.forEach((p, i) => {
     const d = el("details", "project");
     if (i === 0) d.open = true;
@@ -35,12 +168,28 @@
         <span class="plus" aria-hidden="true">+</span>
       </summary>
       <div class="body">
-        <ul>${p.points.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
-        <div class="tags">${p.tags.map((t) => `<span>${esc(t)}</span>`).join("")}</div>
-        ${p.demo ? `<a class="demo-link" href="#top" data-demo>Run the live model at the top of the page ↑</a>` : ""}
+        <div class="body-text">
+          <ul>${p.points.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+          <div class="tags">${p.tags.map((t) => `<span>${esc(t)}</span>`).join("")}</div>
+          ${p.demo ? `<a class="demo-link" href="#top" data-demo>Run the live model at the top of the page ↑</a>` : ""}
+        </div>
+        <div class="figs"></div>
       </div>`;
+    const figs = $(".figs", d);
+    if (p.image) {
+      const f = el("figure", "fig photo");
+      const img = new Image(); img.src = p.image.src; img.alt = p.image.alt || ""; img.loading = "lazy";
+      f.appendChild(img);
+      if (p.image.alt) f.appendChild(el("figcaption", "fig-note", esc(p.image.alt)));
+      figs.appendChild(f);
+    }
+    (p.figures || []).forEach((name) => FIGS[name] && figs.appendChild(FIGS[name]()));
+    if (!figs.childElementCount) figs.remove();
     $("#projects-list").appendChild(d);
   });
+
+  // Core subjects
+  if (C.subjects) $("#subjects").innerHTML = C.subjects.map((s) => `<li>${esc(s)}</li>`).join("");
   document.addEventListener("click", (e) => {
     if (e.target.closest("[data-demo]")) setTimeout(() => sim.start(true), 400);
   });
