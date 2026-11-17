@@ -10,13 +10,11 @@ Edit **`content.js`**. Everything on the page comes from that file: name, roles,
 Put images in `images/` and add `image: { src: "images/file.jpg", alt: "..." }` to a project in `content.js`.
 
 ## Features
-- Particle background that reacts to the mouse (click the background for a burst)
-- Typing headline, scroll reveals, animated counters and skill bars
-- 3D-tilt project cards, magnetic buttons, filterable skills
-- Journey slider (past → now → future) and flip cards for future goals
-- Dark/light theme
-- Hidden terminal: press `` ` `` and type `help`
-- Easter eggs: Konami code, or click the logo 5 times
+- Live, simplified WAAM thermal model at the top: material is added layer by layer, the torch moves along the wall, and the colours follow an ANSYS-style temperature scale
+- Projects that expand to show drawn figures: an interactive Ackermann steering diagram, a before/after view of the pitman arm optimisation, and WAAM tool paths compared
+- Filterable skills, core subjects, internships and certifications
+- Journey slider (past → now → future) and flip cards for goals
+- Light and dark themes, plus a hidden command line: press `` ` `` and type `help`
 
 ## Preview locally
 Open `index.html` in a browser.
