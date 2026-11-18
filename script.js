@@ -279,11 +279,29 @@
     $("#goalCards").appendChild(b);
   });
 
-  // Links
+  // Contact: email (shown as text with a copy button) + public links
+  if (C.email) {
+    const box = el("div", "email-box");
+    box.innerHTML = `<span class="label">Email</span>
+      <a class="email" href="mailto:${esc(C.email)}">${esc(C.email)}</a>
+      <button type="button" class="btn small ghost" id="copyEmail">Copy</button>`;
+    $("#links").before(box);
+    $("#copyEmail").addEventListener("click", () => {
+      const done = () => toast("Email address copied");
+      try {
+        navigator.clipboard.writeText(C.email).then(done, () => selectEmail());
+      } catch (_) { selectEmail(); }
+    });
+    const selectEmail = () => {
+      const r = document.createRange(); r.selectNodeContents($(".email", box));
+      const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+      toast("Press Ctrl+C (or Copy) to copy the address");
+    };
+  }
   const names = { linkedin: "LinkedIn", github: "GitHub" };
-  Object.entries(C.links).forEach(([k, v], i) => {
+  Object.entries(C.links).forEach(([k, v]) => {
     if (!v) return;
-    const a = el("a", i === 0 ? "btn" : "btn ghost", esc(names[k] || k) + " ↗");
+    const a = el("a", $("#links").childElementCount === 0 ? "btn" : "btn ghost", esc(names[k] || k) + " ↗");
     a.href = v; a.target = "_blank"; a.rel = "noopener";
     $("#links").appendChild(a);
   });
@@ -532,7 +550,7 @@
     skills: () => C.skills.map((s) => `${s.name.padEnd(32, ".")} ${s.level}`).join("\n"),
     exp: () => C.experience.map((x) => `- ${x.org}, ${x.when}`).join("\n") + "\n" + C.certifications.map((c) => `- ${c.name} (${c.by}), ${c.when}`).join("\n"),
     goals: () => C.goals.map((g) => `- ${g.front}: ${g.back}`).join("\n"),
-    contact: () => Object.entries(C.links).filter(([, v]) => v).map(([k, v]) => `${k}: ${v}`).join("\n"),
+    contact: () => [C.email ? `email: ${C.email}` : "", ...Object.entries(C.links).filter(([, v]) => v).map(([k, v]) => `${k}: ${v}`)].filter(Boolean).join("\n"),
     solve: () => { scrollTo({ top: 0, behavior: "smooth" }); sim.start(true); return "*** SOLVE *** Transient thermal run started. Watch the model at the top."; },
     "/solu": () => cmds.solve(),
     theme: () => { $("#themeBtn").click(); return "Theme switched."; },
