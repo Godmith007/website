@@ -1,6 +1,6 @@
 /* =========================================================
    EDIT THIS FILE to change what the site says.
-   Kept free of personal details: no town, phone, email,
+   Kept free of personal details: no town, phone,
    college, school, grades or other people's names.
 
    To add a photo to a project: put the file in /images and add
@@ -157,9 +157,11 @@ const CONTENT = {
     { front: "Always learning", back: "Keep going deeper into simulation, and check every model against real test data." },
   ],
 
+  // Shown on the Contact section. Leave "" to hide.
+  email: "amithkjon@gmail.com",
+
   // Public links only. Leave "" to hide.
   links: {
     linkedin: "https://www.linkedin.com/in/amith-john-652480267/",
-    github: "https://github.com/godmith007",
   },
 };

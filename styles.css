@@ -391,3 +391,7 @@ h1, h2, h3 { text-wrap: balance; margin: 0; }
 @media (max-width: 920px) { .project .body { grid-template-columns: 1fr; } }
 @media (max-width: 420px) { .flow { grid-template-columns: 80px minmax(0, 1fr); } .fig-read dd { font-size: 0.9rem; } }
 .dimline.small text { font-size: 7px; }
+.email-box { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 24px; padding: 14px 18px; background: var(--sheet); border: 1px solid var(--line); border-radius: var(--r); max-width: 100%; }
+.email-box .label { flex-basis: 100%; }
+.email-box .email { font: 500 clamp(1rem, 4.5vw, 1.3rem) var(--f-mono); color: var(--ink); text-decoration: none; overflow-wrap: anywhere; min-width: 0; user-select: all; }
+.email-box .email:hover { color: var(--accent); }
